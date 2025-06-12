@@ -12,11 +12,12 @@ def get_newest_screenshot() -> str:
     return newest_file
 
 def list_categories() -> str:
-    categories = ""
+    categories = "["
     for category in os.listdir(SCREENSHOTS_DIRECTORY):
         category_path = os.path.join(SCREENSHOTS_DIRECTORY, category)
         if os.path.isdir(category_path):
-            categories += f"{category}\n"
+            categories += f"'{category}', "
+    categories += "]"
     return categories
 
 def create_directory(directory_name: str) -> None:
@@ -56,13 +57,13 @@ def rename_and_move_screenshot(filename: str, new_name: str) -> None:
     
     # Create destination directory if needed
     if destination_path.parent != screenshots_dir:
-        print(f"Creating directory: {destination_path.parent}")
+        print(f"\nCreating directory: {destination_path.parent}\n")
         destination_path.parent.mkdir(parents=True, exist_ok=True)
     
     # Perform the move
     try:
         shutil.move(str(source_path), str(destination_path))
-        print(f"✅ Successfully moved to: {destination_path}")
+        print(f"✅ Successfully moved to: {destination_path}\n")
     except Exception as e:
-        print(f"❌ Error during move: {e}")
+        print(f"❌ Error during move: {e}\n")
         raise

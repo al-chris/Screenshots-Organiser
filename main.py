@@ -11,7 +11,7 @@ from helpers import SCREENSHOTS_DIRECTORY, rename_and_move_screenshot
 from helpers import list_categories, get_newest_screenshot, create_directory
 
 newest_screenshot = get_newest_screenshot()
-print(f"Newest Screenshot: {newest_screenshot}")
+print(f"Newest Screenshot: {newest_screenshot}\n")
 
 with open(os.path.join(SCREENSHOTS_DIRECTORY, newest_screenshot), "rb") as file:
     data = file.read()
@@ -38,7 +38,7 @@ class Category(BaseModel):
     category: str
 
 category_agent = Agent(
-    "google-gla:gemini-1.5-flash",
+    "google-gla:gemini-2.5-flash-preview-05-20",
     system_prompt="""You will get a list of categories and then you will get a description for a screenshot. 
     Decide if the screenshot should be in an existing category or if a new category should be created for that screenshot. 
     Return the category.""",
@@ -51,11 +51,12 @@ results = category_agent.run_sync(f"""
 """)
 
 category = results.output.category
+print(f"\n\nList Categories: {list_categories()}\n")
 
-print(f"Category: {category}")
+print(f"\nSelected Category: {category}\n\n")
 
 move_file_agent = Agent(
-    "google-gla:gemini-1.5-flash",
+    "google-gla:gemini-2.5-flash-preview-05-20",
     system_prompt="You will get a filename and a category. Use the tools to first create a category and then move the file to that category.",
     tools=[Tool(create_directory, takes_ctx=False), Tool(rename_and_move_screenshot, takes_ctx=False)]
 )
