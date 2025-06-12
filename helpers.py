@@ -26,7 +26,7 @@ def create_directory(directory_name: str) -> None:
 
 def rename_and_move_screenshot(filename: str, new_name: str) -> None:
     """
-    Rename and move a screenshot file, with better error handling.
+    Rename and move a screenshot file.
     """
     screenshots_dir = Path(SCREENSHOTS_DIRECTORY)
     source_path = screenshots_dir / filename

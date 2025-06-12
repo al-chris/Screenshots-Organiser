@@ -16,26 +16,30 @@ print(f"Newest Screenshot: {newest_screenshot}")
 with open(os.path.join(SCREENSHOTS_DIRECTORY, newest_screenshot), "rb") as file:
     data = file.read()
 
-class Filename(BaseModel):
-    filename: str
+class Description(BaseModel):
+    description: str
 
-rename_file_agent = Agent(
+describe_file_agent = Agent(
     model="google-gla:gemini-2.0-flash",
-    system_prompt="Come up with one descriptive filename for the following screenshot. Return just the name.",
-    output_type=Filename
+    # system_prompt="Come up with one descriptive filename for the following screenshot. Return just the name.",
+    system_prompt="""Describe the contents of this screenshot in detail. 
+    Include information about the interface, visible text, layout, colors, icons, user interactions and any other relevant elements. 
+    Mention the context if it can be inferred (e.g., what app or website it might be, what action the user is performing). 
+    Be objective and specific.""",
+    output_type=Description
 )
 
-result = rename_file_agent.run_sync([BinaryContent(data=data, media_type="image/png")])
+result = describe_file_agent.run_sync([BinaryContent(data=data, media_type="image/png")])
 
-filename = result.output.filename
-print(f"Filename: {filename}")
+description = result.output.description
+print(f"Description: {description}")
 
 class Category(BaseModel):
     category: str
 
 category_agent = Agent(
-    "google-gla:gemini-1.5-flash-8b",
-    system_prompt="""You will get a list of categories and then you will get a filename for a screenshot. 
+    "google-gla:gemini-1.5-flash",
+    system_prompt="""You will get a list of categories and then you will get a description for a screenshot. 
     Decide if the screenshot should be in an existing category or if a new category should be created for that screenshot. 
     Return the category.""",
     output_type=Category
@@ -43,7 +47,7 @@ category_agent = Agent(
 
 results = category_agent.run_sync(f"""
     Categories: {list_categories()}
-    Filename: {filename}
+    Description: {description}
 """)
 
 category = results.output.category
@@ -57,6 +61,6 @@ move_file_agent = Agent(
 )
 
 move_file_agent.run_sync(
-    f"Filename: {filename}\n" \
+    f"Filename: {newest_screenshot}\n" \
     f"Category: {category}\n"
 )
