@@ -3,10 +3,10 @@ import shutil
 
 SCREENSHOTS_DIRECTORY = "C:/Users/CHRISTOPHER/Pictures/Screenshots"
 
-def get_newest_screenshot() -> str | None:
+def get_newest_screenshot() -> str:
     files = [f for f in os.listdir(SCREENSHOTS_DIRECTORY) if f.endswith(".png")]
     if not files:
-        return None
+        return ""
     newest_file = max(files, key=lambda f: os.path.getctime(os.path.join(SCREENSHOTS_DIRECTORY, f)))
     return newest_file
 
